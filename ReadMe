@@ -1,0 +1,123 @@
+J/A+A/477/967  Advanced fit technique for astrophysical spectra  (Bukvic+, 2008)
+================================================================================
+Advanced fit technique for astrophysical spectra.
+    Bukvic S., Spasojevic Dj., Zigman V.
+   <Astron. Astrophys. 477, 967 (2008)>
+   =2008A&A...477..967B
+================================================================================
+ADC_Keywords: Spectroscopy
+Keywords: methods: data analysis - methods: numerical -
+          techniques: spectroscopic - line: profiles
+
+Abstract:
+    The purpose of this demo program is to illustrate a robust method of
+    data fitting convenient for dealing with astrophysical spectra
+    contaminated by a large fraction of outliers.
+
+    We base our approach on the suitable defined measure - the density of
+    the least-squares (DLS) which characterize subsets of the whole data
+    set. The best-fit parameters are obtained by the least-squares method
+    on a subset having the maximum value of DLS or, less formally, on the
+    largest subset subset free of outliers.
+
+    Due to its simplicity and robustness, the proposed approach could be a
+    method of choice for some common tasks like estimation of continuum in
+    the presence of spectral lines and estimation of spectral line
+    parameters in the presence of outliers. See full paper for details
+    regarding the estimation of the thermodynamic temperature from the
+    spectrum rich in spectral lines.
+
+Description:
+    Simple FORTRAN90 Demo of a complete program that uses DLSFIT routine
+    (Bukvic, Spasojevic, and Zigman) for robust data fitting.
+
+    The program consists of:
+        1) main program: DLSFIT_AA_Demo
+        2) subroutine DLSFIT, which performs DSL data fitting,
+        3) subroutine fit - WLS "working engine" for DLSFIT,
+        4) copyright protected FORTRAN77 subroutines: mrqmin, mrqcof, lfit,
+            covsrt, gaussj, zbrent from: Numerical Recipes in Fortran 77:
+            The Art of Scientific Computing, by Press, W.H., Teukolsky, S.A.,
+            Vetterling, W.T., and Flannery, B.P.,
+            Cambridge University Press, Cambridge, 2001, software version 2.10:
+            available on WEB site: http//www.nr.com
+
+    Tested with Compaq Visual Fortran 6.6 and Intel 9.1 compilers.
+    Should be compiled with REAL(8) as default real kind.
+
+
+File Summary:
+--------------------------------------------------------------------------------
+ FileName       Lrecl     Records    Explanations
+--------------------------------------------------------------------------------
+ReadMe             80           .    This file
+DLSFIT_demo.f90   103         729    FORTRAN90 demo program
+--------------------------------------------------------------------------------
+
+Description of file:
+
+    Explanation of DLSFIT subroutine calling list:
+    ----------------------------------------------
+
+    The user supplies to DLSFIT subroutine a set of n0 experimental data points
+    x(1:n0), y(1:n0), with individual standard deviations sig(1:n0) of their
+    y_i's; if sig(1:n0) are not available, then set all sig(i)=1 prior to
+    DLSFIT call. The next argument in DLSFIT calling list is array a(1:m) of
+    length m. On input, the user supplies initial values of model function
+    parameters in a(1:m) in the case when the model function is a non-linear
+    function of its parameters; otherwise, the input values supplied in a(1:m)
+    are irrelevant. On output, the main result of DLS method - the best-fit
+    parameters associated with the best subset - are returned in a(1:m).
+
+
+    The input parameter rp is the removal parameter. According to our
+    experience, when 0.9<rp<=1 the best-fit parameters returned for different
+    values of rp coincide within the error margins.
+
+    Six parameters (chisq, dls, db, ns, spos, sbno) which follow in DLSFIT
+    calling list are output parameters. Thus, chisq is chi-square and dls is
+    the density of least-squares obtained on the best subset in the ordered
+    collection C, found by DLSFIT, while db is the width of the best subset.
+    Additionally, ns is the total number of subsets in C, spos(1:ns) is an
+    integer array which contains the number of data points in each subset from
+    C, and sbno is the ordinal number of the best subset in C.
+
+    Note well that the arrays x(1:n0), y(1:n0) and sig(1:n0) are reordered on
+    output so that the first spos(i) data points belong to the subset s_i in C.
+    In this way, the user can obtain relevant data for each subset s_ in C by
+    applying the OLS method on the first spos(i) elements of arrays x, y, and
+    sig.
+
+    The next three parameters covar, ia, funcs) in the calling list of the
+    DLSFIT subroutine are specific to the applied lfit and mrqmin
+    NR subroutines. Thus, covar(1:m,1:m) is a two-dimensional array, which on
+    output contains the elements of covariance matrix. The integer array
+    ia(1:m) provides a convenient way to keep some of the parameters frozen on
+    their input values (ia(j)=0 for frozen a(j), otherwise ia(j) is non-zero);
+    the values of all frozen parameters must be supplied on input in array a.
+    Finally, funcs is the name of a user supplied subroutine (fpoly from NR in
+    the case of polynomial fit) proceeded to DLSFIT when DLSFIT is called; when
+    a general-linear fit is performed, then funcs(x,afunc,m) should return the
+    m basis functions evaluated at x in the array afunc(1:m). In the opposite
+    case funcs is a user supplied subroutine having syntax funcs(x,a,y,dyda,m).
+    For given x and model function parameters a, supplied in array a(1:m) of
+    length m, it returns the calculated value f(x;a) of model function in
+    variable y, together with values of all model function partial derivatives,
+    returned in array dyda(1:m).
+
+    The last three parameters in DLSFIT calling list are lf, k, and res. The
+    first of them, lf, is a LOGICAL input parameter. When lf is set to .TRUE.,
+    then DLSFIT performs general-linear WLS data fitting by calling lfit
+    subroutine; otherwise, non-linear fit is performed with an aid of mrqmin
+    subroutine. The value of DLS exponent k is supplied to DLSFIT subroutine in
+    the second parameter of the group, k. Finally, we must also supply the
+    value of d_{max} (or delta_{max}) used in DLS calculations in the
+    indefinite case. This is supplied through parameter res - the original
+    resolution of measurement.
+
+--------------------------------------------------------------------------------
+
+Acknowledgements:
+    Srdjan Bukvic, ebukvic(at)ff.bg.ac.yu
+================================================================================
+(End)                                        Patricia Vannier [CDS]  06-Nov-2007
