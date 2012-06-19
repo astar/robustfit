@@ -1,3 +1,11 @@
+Changes DLST demo to fitfits
+allow get fits as parametr
+
+compile
+
+gfortran readfit.f90 fitfits.f90 -lcfitsio -o fitfits
+
+
 J/A+A/477/967  Advanced fit technique for astrophysical spectra  (Bukvic+, 2008)
 ================================================================================
 Advanced fit technique for astrophysical spectra.

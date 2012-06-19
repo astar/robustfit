@@ -16,7 +16,7 @@ PROGRAM DLSFIT_Demo
 
    n0=11
    !ALLOCATE(x(n0));ALLOCATE(y(n0));
-   ALLOCATE(sig(n0));ALLOCATE(spos(n0))
+
    !=========================================================================
    ! Data used in Example 1 (see Fig.2)
    !=========================================================================
@@ -25,9 +25,12 @@ PROGRAM DLSFIT_Demo
    call get_command_argument(1, filename)
    call readfit(filename,x,y)
    n0=size(x)
-   write(*,*) x
+   ALLOCATE(sig(n0));ALLOCATE(spos(n0))
+   sig=1.0
+   write(*,*) n0
+   
    ! sig contains uncertainties of y-data points; if unknown, set all sig(i)=1
-   sig=(/1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1./)  ! 'sig' must be supplied
+   !   sig=(/1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1./)  ! 'sig' must be supplied
    ! For demo purpose, these 'sig' are overestimated.
    !=========================================================================
    ! End of experimental data
@@ -37,9 +40,9 @@ PROGRAM DLSFIT_Demo
    ! Example of input parameters
    !=========================================================================
    lf=.false.     ! .TRUE. for linear fit, .FALSE. for non-linear fit
-   ma=2           ! Fit to straight line;
+   ma=5           ! Fit to straight line;
    ALLOCATE(a(ma));ALLOCATE(da(ma));ALLOCATE(ia(ma));ALLOCATE(covar(ma,ma))
-   a=(/1.D0,0.D0/)   ! Trial parameters; irrelevant for linear fit
+   a=(/1.D0,0.D0,0.D0,0.D0,0.D0/)   ! Trial parameters; irrelevant for linear fit
    ia=1             ! No frozen parameters
    rp=0.9            ! remove parameter
    sigs_available=.TRUE.
@@ -104,12 +107,14 @@ PROGRAM DLSFIT_Demo
    sig0=db/zbrent(FCL,.1,3.,1D-11)
    IF(sigs_available)THEN
       IF ((sig0<0.5).OR.(sig0>1.5))THEN
-         PRINT"(A,F8.4,A)"," sig0 = ",REAL(sig0,4)," is notably different from 1"
-         PRINT"("" Rescale experimental errors (T/F) = "")"
-         READ(*,*) rescale_sigs
-         PRINT*
-         IF(.NOT.rescale_sigs) sig0=1.
+         ! RESCALE ERRORS BY DEFAULT
          chisq=chisq/(sig0*sig0)
+         !PRINT"(A,F8.4,A)"," sig0 = ",REAL(sig0,4)," is notably different from 1"
+         !PRINT"("" Rescale experimental errors (T/F) = "")"
+         !READ(*,*) rescale_sigs
+         !PRINT*
+         !IF(.NOT.rescale_sigs) sig0=1.
+         !chisq=chisq/(sig0*sig0)
       END IF
    ELSE
       chisq=chisq/(sig0*sig0)
