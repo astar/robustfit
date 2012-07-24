@@ -1,5 +1,5 @@
 !************ FORTRAN DEMO PROGRAM ***********************************************
-PROGRAM DLSFIT_Demo 
+PROGRAM DLSFIT_Demo
   USE fits
    REAL,ALLOCATABLE::x(:),y(:),sig(:),a(:),da(:),covar(:,:)
    INTEGER,ALLOCATABLE::spos(:),ia(:)
@@ -23,12 +23,13 @@ PROGRAM DLSFIT_Demo
    !x=(/1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,11./)
    !y=(/1.,2.1,3.1,3.9,4.8,7.5,6.85,6.5,9.15,11.,11.1/)
    call get_command_argument(1, filename)
+   write(*, '(A)', ADVANCE = "NO") filename
    call readfit(filename,x,y)
    n0=size(x)
    ALLOCATE(sig(n0));ALLOCATE(spos(n0))
    sig=1.0
-   write(*,*) n0
-   
+   !write(*,*) n0
+
    ! sig contains uncertainties of y-data points; if unknown, set all sig(i)=1
    !   sig=(/1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1./)  ! 'sig' must be supplied
    ! For demo purpose, these 'sig' are overestimated.
@@ -136,27 +137,30 @@ CONTAINS
    SUBROUTINE Echo_Of_Program_Name
       ! Writes the program name on the standard output unit (screen)
  !      OPEN(UNIT=6,CARRIAGECONTROL='FORTRAN') ! Standard output unit (screen)
-      WRITE(6,*)""
-      WRITE(6,*)"Program DLSFIT_AA_Demo for DLS robust data fitting"
-      WRITE(6,*)"--------------------------------------------------"
-      WRITE(6,*)""
+ !     WRITE(6,*)""
+ !     WRITE(6,*)"Program DLSFIT_AA_Demo for DLS robust data fitting"
+ !     WRITE(6,*)"--------------------------------------------------"
+ !     WRITE(6,*)""
    END SUBROUTINE Echo_Of_Program_Name
    SUBROUTINE DLS_Fit_Report
       ! Writes the DLS fit report on the standard output unit (screen)
-      CHARACTER(10)::int2str
-      WRITE(6,"(""+Best fit parameters: A=                      "")")
-       DO i=1,ma
-         WRITE(6,*)i,":",a(i),achar(241),da(i)
-       END DO
-      WRITE(6,*)""
-      WRITE(6,*)"DLS is max on subset ",TRIM(int2str(sbno))," (from ",TRIM(int2str(ns)),")"
-      WRITE(6,*)"Number of close points = ",TRIM(int2str(spos(sbno)))
-      WRITE(6,*)"DLSmax =",dls
-      WRITE(6,*)"Width of best subset Db =",db
-      WRITE(6,*)"CHISQ on best subset =",chisq
-      WRITE(6,*)""
-      WRITE(6,"("" Program DLSFIT_AA_Demo is finished. Press any key..."")")
-      READ(*,*)
+       CHARACTER(10)::int2str, tmp1, tmp2
+       CHARACTER(100)::res
+!       DO i=1,ma
+!          write(,,advance="no") a(i),da(i)
+!          write(*, '(F5.3)', ADVANCE = "NO") a(i), da(i)
+!       END DO
+
+       write(*,*) (",",a(i),i=1,ma)
+!       WRITE(6,*)""
+!      WRITE(6,*)"DLS je max on subset ",TRIM(int2str(sbno))," (from ",TRIM(int2str(ns)),")"
+!      WRITE(6,*)"Number of close points = ",TRIM(int2str(spos(sbno)))
+!      WRITE(6,*)"DLSmax =",dls
+!      WRITE(6,*)"Width of best subset Db =",db
+!      WRITE(6,*)"CHISQ on best subset =",chisq
+!      WRITE(6,*)""
+!      WRITE(6,"("" Program DLSFIT_AA_Demo is finished. Press any key..."")")
+!      READ(*,*)
       CLOSE(UNIT=6)
    END SUBROUTINE DLS_Fit_Report
 END PROGRAM DLSFIT_Demo
@@ -176,16 +180,16 @@ SUBROUTINE DLSFIT(x,y,sig,n0,a,m,rp,&
    ! rp               - removal parameter
    ! ia               - for frozen a(j) set ia(j)=0, otherwise ia(j) is non-zero;
    ! funcs            - the name of a user supplied subroutine. Following Numerical Recipes
-   !                    methods, funcs returns m basis functions evaluated at x in the array 
-   !                    afunc(1:m) for general-linear WLS. Otherwise, it returns the calculated 
-   !                    value f(x;a) of model function in variable y, together with the values 
+   !                    methods, funcs returns m basis functions evaluated at x in the array
+   !                    afunc(1:m) for general-linear WLS. Otherwise, it returns the calculated
+   !                    value f(x;a) of model function in variable y, together with the values
    !                    of all model function partial derivatives, returned in array dyda(1:m).
    ! lf               - .TRUE. for general-linear WLS data fitting, otherwise .FALSE.
    ! k                - DLS exponent;
    ! res              - the original resolution of measurement;
    !
    ! Output parameters:
-   ! ==================    
+   ! ==================
    ! a(1:m)           - the best-fit parameters associated with the best subset;
    ! chisq            - chi-square obtained on the best subset;
    ! dls              - the density of least-squares obtained on the best subset;
@@ -195,8 +199,8 @@ SUBROUTINE DLSFIT(x,y,sig,n0,a,m,rp,&
    ! sbno             - the ordinal number of the best subset in C
    ! covar(1:m,1:m)   - covariance matrix
    !
-   ! Note: x(1:n0), y(1:n0) are reordered on output so that the first spos(i) data points belong 
-   ! to the subset s_i in C.            
+   ! Note: x(1:n0), y(1:n0) are reordered on output so that the first spos(i) data points belong
+   ! to the subset s_i in C.
 
 !***********************************************************************************
    ! Remove the next line if Compaq compiler is not used
@@ -734,7 +738,7 @@ FUNCTION zbrent(func,x1,x2,tol)
       endif
       fb=func(b)
    end do
-   WRITE(6,*) "zbrent exceeding maximum iterations"
+   !WRITE(6,*) "zbrent exceeding maximum iterations"
    zbrent=b
    return
 END
