@@ -18,7 +18,8 @@ call ftgnrw(15,nrows,status)
 allocate(wave(nrows),flux(nrows))
 
 
-call ftgcve(15,1,frow,felem,size(wave),nullval,wave,anyf,status)
-call ftgcve(15,2,frow,felem,size(flux),nullval,flux,anyf,status)
+call ftgcve(15,3,frow,felem,size(wave),nullval,wave,anyf,status)
+call ftgcve(15,1,frow,felem,size(flux),nullval,flux,anyf,status)
+#write(*,*) wave
 END SUBROUTINE readfit
 END MODULE fits

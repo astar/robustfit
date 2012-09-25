@@ -248,7 +248,7 @@ CONTAINS
    SUBROUTINE NewMeritVals
       ! Calculates new DLS value
       spos(ns)=nt;dbt=0
- write     DO i=1,nt
+     DO i=1,nt
          d=ABS(y(i)-fun(x(i)))/sig(i); IF(dbt<d) dbt=d
       END DO
       IF(dbt>dtiny)THEN
