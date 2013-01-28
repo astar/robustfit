@@ -98,7 +98,7 @@ PROGRAM DLSFIT_Demo
    IF(sigs_available)THEN
       IF ((sig0<0.5).OR.(sig0>1.5))THEN
          PRINT"(A,F8.4,A)"," sig0 = ",REAL(sig0,4)," is notably different from 1"
-         PRINT"("" Rescale experimental errors (T/F) = ""\)"
+         PRINT"("" Rescale experimental errors (T/F) = "")"
          READ(*,*) rescale_sigs
          PRINT*
          IF(.NOT.rescale_sigs) sig0=1.
@@ -119,11 +119,11 @@ PROGRAM DLSFIT_Demo
 
 
    CALL DLS_Fit_Report  ! Writes the DLS fit report on the standard output unit (screen)
-   STOP
+
 CONTAINS
    SUBROUTINE Echo_Of_Program_Name
       ! Writes the program name on the standard output unit (screen)
-      OPEN(UNIT=6,CARRIAGECONTROL='FORTRAN') ! Standard output unit (screen)
+!      OPEN(UNIT=6,CARRIAGECONTROL='FORTRAN') ! Standard output unit (screen)
       WRITE(6,*)""
       WRITE(6,*)"Program DLSFIT_AA_Demo for DLS robust data fitting"
       WRITE(6,*)"--------------------------------------------------"
@@ -143,7 +143,7 @@ CONTAINS
       WRITE(6,*)"Width of best subset Db =",db
       WRITE(6,*)"CHISQ on best subset =",chisq
       WRITE(6,*)""
-      WRITE(6,"("" Program DLSFIT_AA_Demo is finished. Press any key...""\)")
+      WRITE(6,"("" Program DLSFIT_AA_Demo is finished. Press any key..."")")
       READ(*,*)
       CLOSE(UNIT=6)
    END SUBROUTINE DLS_Fit_Report
@@ -281,7 +281,7 @@ FUNCTION FCL(x)
    ! FCL(x) is the function which appears on the left-hand side of Eq. 6.
    REAL,PARAMETER::k=2.      ! DLS exponent k
    PARAMETER (Pi=3.1415926535897932384626433832795D0)
-   FCL=x*(x*x+k)*EXP(-x*x/2)-k*SQRT(Pi/2)*DERF(x/SQRT(2.))
+   FCL=x*(x*x+k)*EXP(-x*x/2)-k*SQRT(Pi/2)*DERF(x/SQRT(2.d0))
 END FUNCTION FCL
 !*********************************************************************************
 SUBROUTINE FPOLY_lin(x,p,np)
@@ -479,7 +479,7 @@ SUBROUTINE lfit(x,y,sig,ndat,a,ia,ma,covar,npc,chisq,funcs)
    do j=1,ma
       if(ia(j).ne.0) mfit=mfit+1
    end do
-   if(mfit.eq.0) pause "lfit: no parameters to be fitted"
+   if(mfit.eq.0) stop "lfit: no parameters to be fitted"
    do j=1,mfit
       do k=1,mfit
          covar(j,k)=0.
@@ -616,7 +616,7 @@ SUBROUTINE gaussj(a,n,np,b,m,mp)
       endif
       indxr(i)=irow
       indxc(i)=icol
-      if(a(icol,icol).eq.0.) pause "singular matrix in gaussj"
+      if(a(icol,icol).eq.0.) stop "singular matrix in gaussj"
       pivinv=1./a(icol,icol)
       a(icol,icol)=1.
       do l=1,n
@@ -665,7 +665,7 @@ FUNCTION zbrent(func,x1,x2,tol)
    b=x2
    fa=func(a)
    fb=func(b)
-   if((fa.gt.0..and.fb.gt.0.).or.(fa.lt.0..and.fb.lt.0.))pause "root must be bracketed for zbrent"
+   if((fa.gt.0..and.fb.gt.0.).or.(fa.lt.0..and.fb.lt.0.))stop "root must be bracketed for zbrent"
    c=b
    fc=fb
    do iter=1,ITMAX
@@ -722,7 +722,7 @@ FUNCTION zbrent(func,x1,x2,tol)
       endif
       fb=func(b)
    end do
-   pause "zbrent exceeding maximum iterations"
+    WRITE(6,*) "zbrent exceeding maximum iterations"
    zbrent=b
    return
 END
